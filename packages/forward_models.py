@@ -80,13 +80,13 @@ class ForwardModels:
         delta0 = self.delta0 if delta0 is None else delta0
 
         if self.is_perpendicular():
-
             def ode_perp(_, s, Fy):
                 y, Fpy = s
-                f = self.brenner_perpendicular(delta0 + y)
-                dydt = (Fy / f - Fpy) / self._drag(eta_s)
-                return [dydt, (-Fpy + self._drag(eta_p) * dydt) / lam]
-
+                _, fn = self._wall_factors(delta0 + y)
+                dydt = (Fy - Fpy) / (fn * self._drag(eta_s))
+                dFpydt = (-Fpy + fn * self._drag(eta_p) * dydt) / lam
+                return [dydt, dFpydt]
+            
             sol = self._solve_ode(ode_perp, [0, 0], t, t_unload, (Fy,), (0,))
             return None if sol is None else (np.zeros_like(t) if comp == "x" else sol[0])
 
