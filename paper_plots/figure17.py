@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 from packages.main import InferenceProcedure
 
-n_configs = 40
+n_configs = 120
 G_bulk = 17.14
 het_dir = "data/linear_viscoelastic/particle-particle-het"
 
@@ -38,10 +38,23 @@ G_loc = np.array(G_loc)
 G_bar = G_loc.mean()
 print(f"\nG_loc mean over {n_configs} configs = {G_bar:.2f}  (bulk {G_bulk})")
 
+output_file = ROOT / "G_mean_std_80_configs.txt"
+
+np.savetxt(
+    output_file,
+    np.column_stack((np.arange(1, n_configs + 1), G_loc, G_std)),
+    header="config\tG_mean\tG_std",
+    fmt=["%d", "%.8e", "%.8e"],
+    delimiter="\t",
+)
+
+print(f"Saved results to {output_file}")
+
 fig, ax = plt.subplots(figsize=(8, 6))
 ax.hist(G_loc, bins=12, color="steelblue", alpha=0.75, edgecolor="black")
 ax.axvline(G_bar, color="red", lw=2, label=rf"$\bar G_{{\mathrm{{loc}}}} = {G_bar:.2f}$")
 ax.axvline(G_bulk, color="black", ls="--", lw=2, label=rf"$G_{{\mathrm{{bulk}}}} = {G_bulk:.2f}$")
 ax.set(xlabel=r"$G$")
 ax.legend()
+fig.savefig(output_file / 'G_histogram.pdf', dpi=300, bbox_inches='tight')
 plt.show()
