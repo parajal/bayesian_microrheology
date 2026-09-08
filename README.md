@@ -117,9 +117,18 @@ Inside `packages/`, `main.py` defines `InferenceProcedure`, which composes:
 `wall_corrections`, `logtransforms` (sampler/physical coordinate maps),
 `priors`, `likelihood`, `sampler`, and `plotting`.
 
+### Use of AI-assisted development
+
+Parts of the codebase were developed and refined with the assistance
+ of AI-based coding tools. These tools were used to support code 
+ editing, debugging, refactoring, documentation improvements. All 
+ generated or suggested code was reviewed, tested, and validated 
+ by the authors before inclusion in the repository.
+
 ## Reproducibility
 
 `seed` fixes the synthetic measurement noise added at load time, and
 `run_mcmc(random_state=...)` fixes walker initialisation, so a full run is
-reproducible end to end.
+reproducible end to end. For exact reproduction of the results and figures
+reported in the paper, use `seed = 42`.
 
