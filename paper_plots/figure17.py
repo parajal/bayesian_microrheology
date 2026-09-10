@@ -8,7 +8,7 @@ sys.path.insert(0, str(ROOT))
 from packages.main import InferenceProcedure
 
 n_configs = 120
-G_bulk = 17.14
+G_bulk = 19.08
 het_dir = "data/linear_viscoelastic/particle-particle-het"
 
 G_loc, G_std = [], []
