@@ -59,10 +59,17 @@ class ForwardModels:
         Fx, Fy = self._force(F)
         t_unload = self._t_unload_eff if t_unload is None else t_unload
 
-        if self.boundary_model == "unbounded":
+        parallel_bounded = (
+            self.boundary_model == "bounded" and float(self.theta) == 0.0
+        )
+        if self.boundary_model == "unbounded" or parallel_bounded:
             eta0 = eta_s + eta_p
             tau = lam * eta_s / eta0
             drag = self._drag(eta0)
+            if parallel_bounded:
+                delta0_eff = self.delta0 if delta0 is None else delta0
+                f_par, _ = self._wall_factors(delta0_eff)
+                drag = f_par * drag
             Fdir = Fy if comp == "y" else Fx
             v = Fdir / drag
             A = Fdir * lam * eta_p / (drag * eta0)
@@ -76,7 +83,6 @@ class ForwardModels:
             recovery = x0 - A * (1 - np.exp(-t_loading / tau)) * (1 - np.exp(-t_recovery / tau))
             return np.where(t <= t_unload, creep, recovery)
 
-        # bounded only: use the inferred delta0, else the fixed self.delta0
         delta0 = self.delta0 if delta0 is None else delta0
 
         if self.is_perpendicular():
